@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>PingüiCartas: Mensajería Polar 🐧💌</title>
+    <meta name="description" content="Envía cartas mágicas con nuestro pingüino cartero. ¡Crea tu PDF y compártelo!">
+    <meta property="og:title" content="PingüiCartas 🐧">
+    <meta property="og:description" content="¡Tengo un mensaje especial para ti entregado por un pingüino!">
+    <meta property="og:type" content="website">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -12,79 +16,78 @@
         :root {
             --rosa: #ff6fb0;
             --azul-claro: #a8e6ff;
-            --blanco: #ffffff;
-            --texto: #2c3e50;
+            --azul-oscuro: #2c3e50;
+            --nieve: #ffffff;
         }
 
-        /* --- MODO DÍA/NOCHE AUTOMÁTICO --- */
+        /* Modo Noche Automático (8 PM a 7 AM) */
+        body.night-mode {
+            background: linear-gradient(#1a2a6c, #b21f1f, #fdbb2d);
+            --nieve: #e0e0e0;
+        }
+
         body {
-            transition: background 2s ease, color 0.5s ease;
-            min-height: 100vh;
             margin: 0;
             font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(var(--azul-claro), #ffffff);
+            text-align: center;
             overflow-x: hidden;
+            min-height: 100vh;
+            transition: background 1s ease;
         }
 
-        /* Mañana */
-        body.manana { background: linear-gradient(var(--azul-claro), var(--blanco)); color: var(--texto); }
-        /* Tarde */
-        body.tarde { background: linear-gradient(#4ab3ff, var(--azul-claro)); color: var(--texto); }
-        /* Noche */
-        body.noche { background: linear-gradient(#0f2027, #203a43); color: var(--blanco); }
-
         header {
-            background: rgba(255, 111, 176, 0.8);
-            backdrop-filter: blur(5px);
+            background: linear-gradient(90deg, #ff8fc7, #ffcce6);
             color: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 28px;
+            padding: 25px;
+            font-size: clamp(20px, 5vw, 32px);
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        /* --- EDITOR PRO (Glassmorphism) --- */
+        /* Editor Pro */
         #editor {
             margin: 20px auto;
             max-width: 600px;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(15px);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
             border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
             transition: opacity 0.8s;
-        }
-
-        body.noche #editor {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         textarea {
             width: 90%;
             height: 120px;
             border-radius: 20px;
-            border: 2px solid var(--rosa);
+            border: 3px solid white;
             padding: 15px;
             font-size: 16px;
             outline: none;
-            background: rgba(255,255,255,0.8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
 
+        /* Selector de Sellos */
         .seccion-sellos { margin: 15px 0; }
         .sello-btn {
             font-size: 25px;
             cursor: pointer;
             padding: 10px;
-            transition: transform 0.2s;
             display: inline-block;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+            border-radius: 50%;
         }
-        .sello-btn.selected { transform: scale(1.3); }
+        .sello-btn.selected {
+            border-color: var(--rosa);
+            background: white;
+            transform: scale(1.2);
+        }
 
         button {
-            padding: 15px 30px;
+            width: 85%;
+            max-width: 300px;
+            padding: 15px;
             margin: 10px;
             border: none;
             border-radius: 50px;
@@ -93,162 +96,213 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(255, 111, 176, 0.3);
         }
 
-        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 111, 176, 0.4); }
-
-        /* --- ESCENARIO --- */
+        /* Escenario */
         #escenario {
-            height: 250px;
+            height: 280px;
             position: relative;
-            overflow: hidden;
+            border-bottom: 6px solid white;
         }
 
         #pinguinoContainer {
             position: absolute;
             left: 5%;
-            top: 100px;
-            font-size: 60px;
-            transition: left 3.5s cubic-bezier(0.65, 0, 0.35, 1);
+            top: 130px;
+            font-size: 75px;
+            transition: left 3.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
             display: flex;
             align-items: center;
             z-index: 5;
         }
 
-        #buzon {
+        #selloEnSobre {
             position: absolute;
-            right: 10%;
-            top: 100px;
-            font-size: 60px;
+            font-size: 25px;
+            left: 60px;
+            top: 25px;
         }
 
-        .caminar { left: calc(85% - 50px) !important; }
+        #buzon {
+            position: absolute;
+            right: 8%;
+            top: 130px;
+            font-size: 70px;
+        }
 
-        /* --- NIEVE --- */
+        .caminar { left: calc(92% - 100px) !important; }
+        .pasos { animation: waddle 0.5s infinite ease-in-out; }
+
+        @keyframes waddle {
+            0% { transform: translateY(0) rotate(-6deg); }
+            50% { transform: translateY(-12px) rotate(0deg); }
+            100% { transform: translateY(0) rotate(6deg); }
+        }
+
+        /* Resultado Final */
+        #cartaFrame {
+            display: none;
+            background: #fffef5;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            font-family: 'Georgia', serif;
+            border-left: 8px solid var(--rosa);
+            animation: slideUp 0.8s ease;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
+
         .copo { position: fixed; top: -10px; color: white; user-select: none; pointer-events: none; z-index: 1; }
     </style>
 </head>
 <body>
 
-<header>PingüiCartas 🐧</header>
+<header>PingüiCartas Pro 🐧❄️</header>
 
 <div id="editor">
-    <h3>Escribe tu mensaje</h3>
+    <h3>1. Escribe tu mensaje</h3>
     <textarea id="textoCarta" placeholder="Querido/a..."></textarea>
     
-    <h3>Elige un sello</h3>
+    <h3>2. Elige un sello</h3>
     <div class="seccion-sellos">
         <span class="sello-btn selected" onclick="cambiarSello(this, '❤️')">❤️</span>
         <span class="sello-btn" onclick="cambiarSello(this, '⭐')">⭐</span>
         <span class="sello-btn" onclick="cambiarSello(this, '🍀')">🍀</span>
+        <span class="sello-btn" onclick="cambiarSello(this, '🎀')">🎀</span>
     </div>
     
-    <button onclick="enviarCarta()">¡Entregar! ➡️📮</button>
+    <button onclick="enviarCarta()">¡Entregar Mensaje! ➡️📮</button>
 </div>
 
 <div id="escenario">
     <div id="pinguinoContainer">
         <span>🐧</span>
-        <span id="sobreVisual">✉️<span id="selloEnSobre" style="font-size:15px; position:absolute; top:15px; left:18px;">❤️</span></span>
+        <span id="sobreVisual">✉️<span id="selloEnSobre">❤️</span></span>
     </div>
     <div id="buzon">📮</div>
 </div>
 
-<div id="botonesFinales" style="text-align:center; display:none; padding-bottom:30px;">
+<div id="cartaFrame">
+    <div id="selloFinal" style="font-size: 40px; margin-bottom: 10px;">❤️</div>
+    <div id="contenidoTexto"></div>
+</div>
+
+<div id="botonesFinales" style="display:none; padding-bottom: 50px;">
     <button onclick="descargarPDF()" style="background: #4ab3ff;">Descargar PDF Pro 📄</button>
+    <button onclick="compartir()" style="background: #25D366;">Compartir / WhatsApp 📲</button>
     <button onclick="location.reload()" style="background: #999;">Crear Otra</button>
 </div>
 
 <script>
     let selloSeleccionado = "❤️";
 
-    // --- 1. LÓGICA DE HORAS (CAMBIO DE FONDO) ---
-    function actualizarFondoPorHora() {
-        const hora = new Date().getHours();
-        const body = document.body;
-        body.classList.remove('manana', 'tarde', 'noche');
+    // --- MODO NOCHE ---
+    const hora = new Date().getHours();
+    if (hora >= 20 || hora < 7) document.body.classList.add('night-mode');
 
-        if (hora >= 6 && hora < 12) body.classList.add('manana');
-        else if (hora >= 12 && hora < 19) body.classList.add('tarde');
-        else body.classList.add('noche');
-    }
-    actualizarFondoPorHora();
-    setInterval(actualizarFondoPorHora, 60000); // Revisar cada minuto
-
-    // --- 2. EFECTO NIEVE ---
+    // --- NIEVE ---
     setInterval(() => {
         const copo = document.createElement("div");
         copo.className = "copo";
         copo.innerHTML = "❄️";
         copo.style.left = Math.random() * 100 + "vw";
-        copo.style.fontSize = Math.random() * 15 + 5 + "px";
-        const d = Math.random() * 3 + 2;
+        copo.style.fontSize = Math.random() * 15 + 10 + "px";
+        const d = Math.random() * 3 + 4;
         copo.style.transition = `top ${d}s linear`;
         document.body.appendChild(copo);
-        setTimeout(() => { copo.style.top = "100vh"; }, 100);
+        setTimeout(() => { copo.style.top = "110vh"; }, 100);
         setTimeout(() => { copo.remove(); }, d * 1000);
-    }, 200);
+    }, 350);
 
-    // --- 3. SELECCIÓN DE SELLO ---
     function cambiarSello(elemento, emoji) {
         document.querySelectorAll('.sello-btn').forEach(b => b.classList.remove('selected'));
         elemento.classList.add('selected');
         selloSeleccionado = emoji;
         document.getElementById('selloEnSobre').innerText = emoji;
+        document.getElementById('selloFinal').innerText = emoji;
     }
 
-    // --- 4. ANIMACIÓN DE ENTREGA ---
     function enviarCarta() {
         const t = document.getElementById("textoCarta").value;
         if(!t.trim()) return alert("¡Escribe algo primero!");
 
+        // Vibración (solo en Android)
+        if(navigator.vibrate) navigator.vibrate(100);
+
         document.getElementById("editor").style.display = "none";
-        document.getElementById("pinguinoContainer").classList.add("caminar");
+        const pingui = document.getElementById("pinguinoContainer");
+        pingui.classList.add("pasos", "caminar");
 
         setTimeout(() => {
             document.getElementById("sobreVisual").style.opacity = "0";
             document.getElementById("buzon").innerHTML = "📬";
+            pingui.classList.remove("pasos");
         }, 3500);
 
         setTimeout(() => {
+            document.getElementById("contenidoTexto").innerHTML = t.replace(/\n/g, '<br>');
+            document.getElementById("cartaFrame").style.display = "block";
             document.getElementById("botonesFinales").style.display = "block";
-        }, 4000);
+            document.getElementById("cartaFrame").scrollIntoView({ behavior: 'smooth' });
+        }, 4200);
     }
 
-    // --- 5. GENERACIÓN DE PDF PRO ---
+    // --- COMPARTIR ---
+    async function compartir() {
+        const t = document.getElementById("textoCarta").value;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'PingüiCarta para ti',
+                    text: `🐧💌 Mensaje: ${t}`,
+                    url: window.location.href
+                });
+            } catch (err) {}
+        } else {
+            // Fallback para WhatsApp si no hay share api
+            window.open(`https://wa.me/?text=Tengo una Pinguicarta para ti: ${t}`);
+        }
+    }
+
+    // --- PDF MULTI-PÁGINA ---
     function descargarPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
+        let t = document.getElementById("textoCarta").value;
+        const tLimpio = t.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+
+        function decoracion(p) {
+            p.setDrawColor(255, 111, 176);
+            p.rect(10, 10, 190, 277);
+            p.setFont("helvetica", "bold");
+            p.setFontSize(20);
+            p.text("Pinguicarta Pro", 105, 25, { align: "center" });
+        }
+
+        decoracion(doc);
+        doc.setFont("times", "italic");
+        doc.setFontSize(14);
         
-        let texto = document.getElementById("textoCarta").value;
+        const lineas = doc.splitTextToSize(tLimpio, 160);
+        let y = 45;
+
+        lineas.forEach(l => {
+            if(y > 260) { doc.addPage(); decoracion(doc); y = 40; doc.setFont("times", "italic"); }
+            doc.text(l, 25, y);
+            y += 8;
+        });
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text("Enviado con amor desde el Polo Norte virtual", 105, 282, { align: "center" });
         
-        // Limpiar emojis para PDF
-        const textoLimpio = texto.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
-
-        // Doble borde
-        doc.setDrawColor(255, 111, 176); // Rosa
-        doc.setLineWidth(2);
-        doc.rect(10, 10, 190, 277); 
-        doc.setDrawColor(200, 200, 200); // Gris
-        doc.setLineWidth(0.5);
-        doc.rect(13, 13, 184, 271); 
-
-        // Título
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(28);
-        doc.setTextColor(255, 111, 176);
-        doc.text("PingüiCartas", 105, 30, { align: "center" });
-
-        // Mensaje
-        doc.setFont("times", "normal");
-        doc.setFontSize(16);
-        doc.setTextColor(50, 50, 50);
-        
-        const lineas = doc.splitTextToSize(textoLimpio, 160);
-        doc.text(lineas, 25, 50);
-
-        doc.save("Mi_Pinguicarta.pdf");
+        doc.save("Pinguicarta_Final.pdf");
     }
 </script>
 
