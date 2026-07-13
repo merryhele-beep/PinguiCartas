@@ -11,6 +11,8 @@
     <meta property="og:type" content="website">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -97,6 +99,11 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 5px 20px rgba(255, 111, 176, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
         }
 
         /* Escenario */
@@ -147,12 +154,19 @@
             width: 90%;
             max-width: 500px;
             margin: 20px auto;
-            padding: 30px;
+            padding: 40px 30px; /* Un poco más de padding para la imagen */
             border-radius: 5px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             font-family: 'Georgia', serif;
             border-left: 8px solid var(--rosa);
             animation: slideUp 0.8s ease;
+            text-align: left; /* Alineado a la izquierda queda más natural en imagen */
+        }
+
+        #contenidoTexto {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #333;
         }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } }
@@ -188,11 +202,12 @@
 </div>
 
 <div id="cartaFrame">
-    <div id="selloFinal" style="font-size: 40px; margin-bottom: 10px;">❤️</div>
+    <div id="selloFinal" style="font-size: 40px; margin-bottom: 20px; text-align: center;">❤️</div>
     <div id="contenidoTexto"></div>
 </div>
 
 <div id="botonesFinales" style="display:none; padding-bottom: 50px;">
+    <button onclick="descargarPNG()" style="background: #9b59b6;">Descargar PNG 🖼️</button>
     <button onclick="descargarPDF()" style="background: #4ab3ff;">Descargar PDF 📄</button>
     <button onclick="compartir()" style="background: #25D366;">Compartir / WhatsApp 📲</button>
     <button onclick="location.reload()" style="background: #999;">Crear Otra</button>
@@ -231,7 +246,6 @@
         const t = document.getElementById("textoCarta").value;
         if(!t.trim()) return alert("¡Escribe algo primero!");
 
-        // Vibración (solo en Android)
         if(navigator.vibrate) navigator.vibrate(100);
 
         document.getElementById("editor").style.display = "none";
@@ -264,9 +278,26 @@
                 });
             } catch (err) {}
         } else {
-            // Fallback para WhatsApp si no hay share api
             window.open(`https://wa.me/?text=Tengo una Pinguicarta para ti: ${t}`);
         }
+    }
+
+    // --- NUEVO: FUNCIÓN PARA DESCARGAR PNG ---
+    function descargarPNG() {
+        // Seleccionamos el cuadro de la carta
+        const carta = document.getElementById("cartaFrame");
+        
+        // Le tomamos una "foto" usando html2canvas
+        html2canvas(carta, {
+            scale: 2, // Para que la imagen se vea nítida
+            backgroundColor: "#fffef5" // Mantenemos el color de fondo de la carta
+        }).then(canvas => {
+            // Creamos un enlace invisible para forzar la descarga
+            let enlace = document.createElement('a');
+            enlace.download = 'Mi_Pinguicarta.png';
+            enlace.href = canvas.toDataURL('image/png');
+            enlace.click(); // Simulamos que el usuario hizo clic
+        });
     }
 
     // --- PDF MULTI-PÁGINA ---
